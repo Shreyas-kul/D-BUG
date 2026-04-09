@@ -1,0 +1,34 @@
+name: "D-BUG Scan"
+description: "AI-powered autonomous debugging — scans PRs for bugs"
+author: "D-BUG"
+
+inputs:
+  path:
+    description: "Path to scan"
+    required: false
+    default: "."
+  max-bugs:
+    description: "Maximum bugs to analyze"
+    required: false
+    default: "10"
+  groq-api-key:
+    description: "Groq API key (free at console.groq.com)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install D-BUG
+      shell: bash
+      run: pip install dbug
+
+    - name: Run D-BUG Scan
+      shell: bash
+      env:
+        GROQ_API_KEY: ${{ inputs.groq-api-key }}
+      run: dbug scan ${{ inputs.path }} --max-bugs ${{ inputs.max-bugs }}
